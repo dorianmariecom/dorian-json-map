@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = "dorian-json-map"
-  s.version = "0.0.2"
+  s.version = File.read("VERSION").strip
   s.summary = "maps json to json with ruby code input"
   s.description = s.summary
   s.authors = ["Dorian Marié"]

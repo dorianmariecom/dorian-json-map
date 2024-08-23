@@ -5,15 +5,7 @@ require "dorian/arguments"
 require "dorian/to_struct"
 require "json"
 
-parsed =
-  Dorian::Arguments.parse(
-    version: {
-      alias: :v
-    },
-    help: {
-      alias: :h
-    }
-  )
+parsed = Dorian::Arguments.parse(version: { alias: :v }, help: { alias: :h })
 
 abort parsed.help if parsed.options.help
 
@@ -28,17 +20,19 @@ inputs.each do |input|
   json = JSON.parse(input)
 
   if json.is_a?(Hash)
-    result = json.to_h do |key, value|
-      it = [key.dup, value.dup]
-      eval(parsed.arguments.join(" "))
-      it
-    end
+    result =
+      json.to_h do |key, value|
+        it = [key.dup, value.dup]
+        eval(parsed.arguments.join(" "))
+        it
+      end
   elsif json.is_a?(Array)
-    result = json.map do |it|
-      it = it.dup
-      eval(parsed.arguments.join(" "))
-      it
-    end
+    result =
+      json.map do |it|
+        it = it.dup
+        eval(parsed.arguments.join(" "))
+        it
+      end
   else
     it = json.dup
     eval(parsed.arguments.join(" "))

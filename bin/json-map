@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require "dorian/arguments"
+require "dorian/to_struct"
 require "json"
 
 parsed = Dorian::Arguments.parse(version: { alias: :v }, help: { alias: :h })
@@ -21,21 +22,21 @@ inputs.each do |input|
   if json.is_a?(Hash)
     result =
       json.to_h do |key, value|
-        it = [key.dup, value.dup]
+        it = { key.dup => value.dup }.to_deep_struct
         eval(parsed.arguments.join(" "))
-        it
+        it.from_deep_struct.to_a.first
       end
   elsif json.is_a?(Array)
     result =
       json.map do |it|
-        it = it.dup
+        it = it.dup.to_deep_struct
         eval(parsed.arguments.join(" "))
-        it
+        it.from_deep_struct
       end
   else
-    it = json.dup
+    it = json.dup.to_deep_struct
     eval(parsed.arguments.join(" "))
-    result = it
+    result = it.from_deep_struct
   end
 
   puts JSON.pretty_generate(result)
